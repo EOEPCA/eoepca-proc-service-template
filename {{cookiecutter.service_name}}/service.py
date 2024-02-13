@@ -133,9 +133,12 @@ class EoepcaCalrissianRunnerExecutionHandler(ExecutionHandler):
                     "accept": "application/json",
                     "Authorization": f"Bearer {self.ades_rx_token}",
                 }
-                workspace_response = requests.get(
+                tmp_response = requests.get(
                     workspace_api_endpoint, headers=headers
-                ).json()
+                )
+                logger.info(f"zzz - response code = {tmp_response.status_code}")
+                logger.info(f"zzz - response text = {tmp_response.text}")
+                workspace_response = tmp_response.json()
 
                 logger.info("Set user bucket settings")
 
