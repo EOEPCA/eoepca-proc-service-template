@@ -152,7 +152,7 @@ class EoepcaCalrissianRunnerExecutionHandler(ExecutionHandler):
                 else:
                     logger.error("Problem connecting with the Workspace API")
                     logger.info(f"  Response code = {get_workspace_details_response.status_code}")
-                    logger.info(f"  Response text = {get_workspace_details_response.text}")
+                    logger.info(f"  Response text = \n{get_workspace_details_response.text}")
                     self.use_workspace = False
                     logger.info("Using pre-configured storage details")
             else:
@@ -274,7 +274,7 @@ class EoepcaCalrissianRunnerExecutionHandler(ExecutionHandler):
         conf["additional_parameters"]["STAGEOUT_AWS_ACCESS_KEY_ID"] = os.environ.get("STAGEOUT_AWS_ACCESS_KEY_ID", "minio-admin")
         conf["additional_parameters"]["STAGEOUT_AWS_SECRET_ACCESS_KEY"] = os.environ.get("STAGEOUT_AWS_SECRET_ACCESS_KEY", "minio-secret-password")
         conf["additional_parameters"]["STAGEOUT_AWS_REGION"] = os.environ.get("STAGEOUT_AWS_REGION", "RegionOne")
-        conf["additional_parameters"]["STAGEOUT_OUTPUT"] = os.environ.get("STAGEOUT_OUTPUT", "s3://processingresults")
+        conf["additional_parameters"]["STAGEOUT_OUTPUT"] = os.environ.get("STAGEOUT_OUTPUT", "processingresults")
 
         # DEBUG
         # logger.info(f"init_config_defaults: additional_parameters...\n{json.dumps(conf['additional_parameters'], indent=2)}\n")
