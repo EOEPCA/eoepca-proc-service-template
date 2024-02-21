@@ -95,8 +95,12 @@ class EoepcaCalrissianRunnerExecutionHandler(ExecutionHandler):
 
         eoepca = self.conf.get("eoepca", {})
         self.domain = eoepca.get("domain", "")
+        self.workspace_url = eoepca.get("workspace_url", "")
         self.workspace_prefix = eoepca.get("workspace_prefix", "")
-        self.use_workspace = bool(self.workspace_prefix)
+        if self.workspace_url and self.workspace_prefix:
+            self.use_workspace = True
+        else:
+            self.use_workspace = False
 
         auth_env = self.conf.get("auth_env", {})
         self.ades_rx_token = auth_env.get("jwt", "")
@@ -124,9 +128,7 @@ class EoepcaCalrissianRunnerExecutionHandler(ExecutionHandler):
                 # Workspace API endpoint
                 uri_for_request = f"workspaces/{self.workspace_prefix}-{self.username}"
 
-                workspace_api_endpoint = os.path.join(
-                    f"https://workspace-api.{self.domain}", uri_for_request
-                )
+                workspace_api_endpoint = os.path.join(self.workspace_url, uri_for_request)
 
                 # Request: Get Workspace Details
                 headers = {
@@ -236,7 +238,7 @@ class EoepcaCalrissianRunnerExecutionHandler(ExecutionHandler):
                     "Accept": "application/json",
                     "Authorization": f"Bearer {self.ades_rx_token}",
                 }
-                api_endpoint = f"https://workspace-api.{self.domain}/workspaces/{self.workspace_prefix}-{self.username}"
+                api_endpoint = f"{self.workspace_url}/workspaces/{self.workspace_prefix}-{self.username}"
                 r = requests.post(
                     f"{api_endpoint}/register-json",
                     json=collection_dict,
