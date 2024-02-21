@@ -135,6 +135,8 @@ class EoepcaCalrissianRunnerExecutionHandler(ExecutionHandler):
                     "accept": "application/json",
                     "Authorization": f"Bearer {self.ades_rx_token}",
                 }
+                logger.info(f"zzz: workspace_api_endpoint = {workspace_api_endpoint}")
+                logger.info(f"zzz: headers = {headers}")
                 get_workspace_details_response = requests.get(workspace_api_endpoint, headers=headers)
 
                 # GOOD response from Workspace API - use the details
