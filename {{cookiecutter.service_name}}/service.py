@@ -93,6 +93,8 @@ class EoepcaCalrissianRunnerExecutionHandler(ExecutionHandler):
         super().__init__()
         self.conf = conf
 
+        self.http_proxy_env = os.environ.get("HTTP_PROXY", None)
+
         eoepca = self.conf.get("eoepca", {})
         self.domain = eoepca.get("domain", "")
         self.workspace_url = eoepca.get("workspace_url", "")
@@ -112,6 +114,7 @@ class EoepcaCalrissianRunnerExecutionHandler(ExecutionHandler):
     def pre_execution_hook(self):
         try:
             logger.info("Pre execution hook")
+            self.unset_http_proxy_env()
 
             # DEBUG
             # logger.info(f"zzz PRE-HOOK - config...\n{json.dumps(self.conf, indent=2)}\n")
@@ -170,10 +173,14 @@ class EoepcaCalrissianRunnerExecutionHandler(ExecutionHandler):
             logger.error("ERROR in pre_execution_hook...")
             logger.error(traceback.format_exc())
             raise(e)
+        
+        finally:
+            self.restore_http_proxy_env()
 
     def post_execution_hook(self, log, output, usage_report, tool_logs):
         try:
             logger.info("Post execution hook")
+            self.unset_http_proxy_env()
 
             # DEBUG
             # logger.info(f"zzz POST-HOOK - config...\n{json.dumps(self.conf, indent=2)}\n")
@@ -263,6 +270,18 @@ class EoepcaCalrissianRunnerExecutionHandler(ExecutionHandler):
             logger.error("ERROR in post_execution_hook...")
             logger.error(traceback.format_exc())
             raise(e)
+        
+        finally:
+            self.restore_http_proxy_env()
+
+    def unset_http_proxy_env(self):
+        http_proxy = os.environ.pop("HTTP_PROXY", None)
+        logger.info(f"Unsetting env HTTP_PROXY, whose value was {http_proxy}")
+
+    def restore_http_proxy_env(self):
+        if self.http_proxy_env:
+            os.environ["HTTP_PROXY"] = self.http_proxy_env
+            logger.info(f"Restoring env HTTP_PROXY, to value {self.http_proxy_env}")
 
     @staticmethod
     def init_config_defaults(conf):
