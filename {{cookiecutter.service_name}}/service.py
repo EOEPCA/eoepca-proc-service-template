@@ -140,7 +140,7 @@ class EoepcaCalrissianRunnerExecutionHandler(ExecutionHandler):
                 }
                 logger.info(f"zzz: workspace_api_endpoint = {workspace_api_endpoint}")
                 logger.info(f"zzz: headers = {headers}")
-                get_workspace_details_response = requests.get(workspace_api_endpoint, headers=headers)
+                get_workspace_details_response = requests.get(workspace_api_endpoint, headers=headers, proxies={})
 
                 # GOOD response from Workspace API - use the details
                 if get_workspace_details_response.ok:
@@ -252,18 +252,19 @@ class EoepcaCalrissianRunnerExecutionHandler(ExecutionHandler):
                     f"{api_endpoint}/register-json",
                     json=collection_dict,
                     headers=headers,
+                    proxies={},
                 )
                 logger.info(f"Register collection response: {r.status_code}")
 
                 # TODO pool the catalog until the collection is available
                 #self.feature_collection = requests.get(
-                #    f"{api_endpoint}/collections/{collection.id}", headers=headers
+                #    f"{api_endpoint}/collections/{collection.id}", headers=headers, proxies={}
                 #).json()
             
                 logger.info(f"Register processing results to collection")
                 r = requests.post(f"{api_endpoint}/register",
                                 json={"type": "stac-item", "url": collection.get_self_href()},
-                                headers=headers,)
+                                headers=headers, proxies={})
                 logger.info(f"Register processing results response: {r.status_code}")
 
         except Exception as e:
@@ -275,13 +276,15 @@ class EoepcaCalrissianRunnerExecutionHandler(ExecutionHandler):
             self.restore_http_proxy_env()
 
     def unset_http_proxy_env(self):
-        http_proxy = os.environ.pop("HTTP_PROXY", None)
-        logger.info(f"Unsetting env HTTP_PROXY, whose value was {http_proxy}")
+        # http_proxy = os.environ.pop("HTTP_PROXY", None)
+        # logger.info(f"Unsetting env HTTP_PROXY, whose value was {http_proxy}")
+        pass
 
     def restore_http_proxy_env(self):
-        if self.http_proxy_env:
-            os.environ["HTTP_PROXY"] = self.http_proxy_env
-            logger.info(f"Restoring env HTTP_PROXY, to value {self.http_proxy_env}")
+        # if self.http_proxy_env:
+        #     os.environ["HTTP_PROXY"] = self.http_proxy_env
+        #     logger.info(f"Restoring env HTTP_PROXY, to value {self.http_proxy_env}")
+        pass
 
     @staticmethod
     def init_config_defaults(conf):
