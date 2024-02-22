@@ -140,7 +140,7 @@ class EoepcaCalrissianRunnerExecutionHandler(ExecutionHandler):
                 }
                 logger.info(f"zzz: workspace_api_endpoint = {workspace_api_endpoint}")
                 logger.info(f"zzz: headers = {headers}")
-                get_workspace_details_response = requests.get(workspace_api_endpoint, headers=headers, trust_env=False)
+                get_workspace_details_response = requests.get(workspace_api_endpoint, headers=headers, proxies={})
 
                 # GOOD response from Workspace API - use the details
                 if get_workspace_details_response.ok:
@@ -252,19 +252,19 @@ class EoepcaCalrissianRunnerExecutionHandler(ExecutionHandler):
                     f"{api_endpoint}/register-json",
                     json=collection_dict,
                     headers=headers,
-                    trust_env=False,
+                    proxies={},
                 )
                 logger.info(f"Register collection response: {r.status_code}")
 
                 # TODO pool the catalog until the collection is available
                 #self.feature_collection = requests.get(
-                #    f"{api_endpoint}/collections/{collection.id}", headers=headers, trust_env=False
+                #    f"{api_endpoint}/collections/{collection.id}", headers=headers, proxies={}
                 #).json()
             
                 logger.info(f"Register processing results to collection")
                 r = requests.post(f"{api_endpoint}/register",
                                 json={"type": "stac-item", "url": collection.get_self_href()},
-                                headers=headers, trust_env=False)
+                                headers=headers, proxies={})
                 logger.info(f"Register processing results response: {r.status_code}")
 
         except Exception as e:
